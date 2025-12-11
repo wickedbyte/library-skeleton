@@ -1,0 +1,60 @@
+{
+  "name": "wickedbyte/library-skeleton",
+  "description": "Template for PHP Libraries",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Andy Snell",
+      "email": "andy@wickedbyte.com"
+    }
+  ],
+  "require": {
+    "php": "8.2.* || 8.3.* || 8.4.* || 8.5.*"
+  },
+  "require-dev": {
+    "php-parallel-lint/php-parallel-lint": "^1.4",
+    "phpstan/extension-installer": "^1.4.3",
+    "phpstan/phpstan": "^2.1.33",
+    "phpstan/phpstan-phpunit": "^2.0.10",
+    "phpunit/phpunit": "^12.5.3",
+    "rector/rector": "^2.2.14",
+    "wickedbyte/coding-standard": "^1.0.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "WickedByte\\LibrarySkeleton\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WickedByte\\Tests\\LibrarySkeleton\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    },
+    "process-timeout": 0,
+    "sort-packages": true
+  },
+  "scripts": {
+    "ci:lint": "@lint --no-progress --no-colors",
+    "ci:paratest": "@paratest --no-progress",
+    "ci:phpcs": "@phpcs",
+    "ci:phpstan": "@phpstan --no-progress --no-interaction --no-ansi",
+    "ci:phpunit": "@php vendor/bin/phpunit --no-interaction --no-progress",
+    "ci:rector-dry-run": "@rector-dry-run --no-progress-bar --no-ansi",
+    "lint": "@php vendor/bin/parallel-lint -j $(nproc --ignore=2) --show-deprecated --exclude vendor --exclude build .",
+    "phpcbf": "@php vendor/bin/phpcbf --parallel=$(nproc --ignore=2) --report=full",
+    "phpcs": "@php vendor/bin/phpcs --parallel=$(nproc --ignore=2) --report=full",
+    "phpstan": "@php vendor/bin/phpstan analyze --memory-limit=-1 --verbose",
+    "phpunit": "@php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text",
+    "rector": "@php vendor/bin/rector process",
+    "rector-dry-run": "@php vendor/bin/rector process --dry-run"
+  }
+}
