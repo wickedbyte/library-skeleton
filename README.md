@@ -13,7 +13,7 @@ Common Actions with Makefile targets:
  - `make phpcbf`
  - `make phpstan`
  - `make rector`
- - `make rector-dry-drun`
+ - `make rector-dry-run`
  - `make ci`
 
 To get a fresh start, run `make clean` to delete the vendor and build directories,

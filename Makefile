@@ -18,8 +18,8 @@ SHELL := /bin/bash
 # Set the default goal that will run when just invoking `make`
 .DEFAULT_GOAL := vendor/autoload.php
 
-docker-run = docker run --rm --user $$(id -u):$$(id -g) --volume ./:/app $(DOCKER_IMAGE_TAG)
-docker-run-tty = docker run --rm -it --user $$(id -u):$$(id -g) --volume ./:/app $(DOCKER_IMAGE_TAG)
+# Detect if we are in a TTY
+IS_TTY := $(shell [ -t 1 ] && echo 1 || echo 0)
 
 BUILD_DIRS = build \
 	build/.phpunit.cache \
@@ -43,8 +43,15 @@ else
   DOCKER_UID ?= $(shell id -u)
   DOCKER_GID ?= $(shell id -g)
 endif
+DOCKER_USER ?= "$(DOCKER_UID):$(DOCKER_GID)"
 
-DOCKER_STAMP := build/.docker.json
+DOCKER_RUN_IMAGE ?= $(DOCKER_IMAGE_TAG)
+DOCKER_RUN_FLAGS = --rm $(if $(IS_TTY),--tty) --pull="$(DOCKER_RUN_PULL_IMAGE)" --volume="./:/app"
+
+docker-run = docker run $(DOCKER_RUN_FLAGS) --user="$(DOCKER_USER)" $(DOCKER_RUN_IMAGE)
+docker-run-tty = docker run --rm -it --user $$(id -u):$$(id -g) --volume ./:/app $(DOCKER_IMAGE_TAG)
+
+DOCKER_STAMP := build/docker.json
 
 $(DOCKER_STAMP): Dockerfile | $(BUILD_DIRS)
 build/docker.json:
@@ -75,11 +82,16 @@ upgrade-dev : vendor/autoload.php
 
 .PHONY: clean
 clean:
-	$(docker-run) rm -rf ./build ./vendor
+	rm -rf ./build ./vendor
 
 .PHONY: bash
+bash: DOCKER_RUN_FLAGS += --interactive
 bash: build
-	@$(docker-run-tty) bash
+	$(docker-run) bash
+
+.PHONY: audit
+audit: vendor/autoload.php
+	$(docker-run) composer audit
 
 .PHONY: lint phpcbf phpcs phpstan phpunit phpunit-coverage rector rector-dry-run
 lint phpcbf phpcs phpstan phpunit phpunit-coverage rector rector-dry-run: vendor/autoload.php
@@ -87,7 +99,7 @@ lint phpcbf phpcs phpstan phpunit phpunit-coverage rector rector-dry-run: vendor
 
 # Runs all the code quality checks: lint, phpstan, phpcs, and rector-dry-run".
 .PHONY: ci
-ci: lint phpcs phpstan rector-dry-run phpunit
+ci: lint phpcs phpstan rector-dry-run phpunit audit
 
 # Runs the automated fixer tools, then run the code quality checks in one go, aliased to "preci".
 .PHONY: pre-ci preci
