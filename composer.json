@@ -15,10 +15,10 @@
   "require-dev": {
     "php-parallel-lint/php-parallel-lint": "^1.4",
     "phpstan/extension-installer": "^1.4.3",
-    "phpstan/phpstan": "^2.1.33",
-    "phpstan/phpstan-phpunit": "^2.0.10",
-    "phpunit/phpunit": "^12.5.3",
-    "rector/rector": "^2.2.14",
+    "phpstan/phpstan": "^2.1.38",
+    "phpstan/phpstan-phpunit": "^2.0.12",
+    "phpunit/phpunit": "^13.0",
+    "rector/rector": "^2.3.6",
     "wickedbyte/coding-standard": "^1.0.2"
   },
   "autoload": {

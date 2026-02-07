@@ -44,11 +44,11 @@ else
   DOCKER_GID ?= $(shell id -g)
 endif
 DOCKER_USER ?= "$(DOCKER_UID):$(DOCKER_GID)"
-
+DOCKER_RUN_PULL_IMAGE ?= missing
 DOCKER_RUN_IMAGE ?= $(DOCKER_IMAGE_TAG)
 DOCKER_RUN_FLAGS = --rm $(if $(IS_TTY),--tty) --pull="$(DOCKER_RUN_PULL_IMAGE)" --volume="./:/app"
 
-docker-run = docker run $(DOCKER_RUN_FLAGS) --user="$(DOCKER_USER)" $(DOCKER_RUN_IMAGE)
+docker-run = docker run $(DOCKER_RUN_FLAGS) --user=$(DOCKER_USER) $(DOCKER_RUN_IMAGE)
 docker-run-tty = docker run --rm -it --user $$(id -u):$$(id -g) --volume ./:/app $(DOCKER_IMAGE_TAG)
 
 DOCKER_STAMP := build/docker.json
